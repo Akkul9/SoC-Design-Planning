@@ -729,8 +729,11 @@ now,we will run floorplan,but we observe on running run_placement we get error
        magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/22-07_15-00/tmp/merged.lef def read /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/22-07_15-00/results/routing/picorv32a.def &
        
   ![Screenshot (179)](https://github.com/user-attachments/assets/8a84c185-4bac-4252-8158-79891103983a)
+  
+As we know that the OpenLANE doesn't contain a SPEF extraction tool,the resulting (.spef) file can be found in the routing folder at the results folder
 
-![Screenshot (180)](https://github.com/user-attachments/assets/56191abf-5012-4261-8e82-aecc2486528a)
+![Screenshot (180)](https://github.com/user-attachments/assets/8766294c-e537-4ef7-b35f-65877783297f)
+
 
 #### To view the Parsitic Extraction file, Go to the follwoing directory:
 
