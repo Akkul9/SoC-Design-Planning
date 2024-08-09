@@ -519,21 +519,70 @@ Affects signal integrity and performance.
 
 Switching thresold, Vm (the point at which the device switches the level) is the one of the parameter that defined the robustness of the Inverter. Switching thresold is a point at which Vin=Vout.
 
-![cmos](https://github.com/user-attachments/assets/ccff5d58-6f19-423f-bf5d-afd9a1207120)
 
 
-# DAY 3
+
+
+
+# DAY 3  Design library cells using magic layout and ngspice characterization
+
 ### CREATION OF SPICE DECK FOR CMOS INVERTER
  A Spice deck essentially contains the netlist with connectivity information, the inputs to be provided, output tap points, and additional details. 
 
-![Screenshot (95)](https://github.com/user-attachments/assets/98e6668c-a1a3-4c8e-8008-ff1a07aea726)
+
+
+![Screenshot (425)](https://github.com/user-attachments/assets/c259b339-24d1-441e-b20d-76709056d49a)
 
   Nodes are required to define the netlist 
 
-![Screenshot (96)](https://github.com/user-attachments/assets/d9421a81-dc9d-43c4-9d72-d26aa26ced43)
-![Screenshot (97)](https://github.com/user-attachments/assets/082cd9a2-5d48-4cee-826f-c433a5db9aa4)
+![Screenshot (427)](https://github.com/user-attachments/assets/53df4293-e02c-40f6-8ed6-de9af91ba6f7)
 
-![Screenshot (98)](https://github.com/user-attachments/assets/e9e79c0e-9b1e-4a4a-af5f-17d89934ecf0)
+Component Connectivity:
+In this step, you need to define the connectivity of the substrate pin, which is crucial for tuning the threshold voltage of both PMOS and NMOS transistors. Proper connectivity ensures that the transistors operate with the desired electrical characteristics.
+
+Component Values:
+Here, you specify the values or dimensions of the PMOS and NMOS transistors. In this design, both PMOS and NMOS are given the same size, which likely implies symmetrical characteristics for the transistors in the circuit.
+
+Identify the Nodes:
+Nodes represent points in the circuit where components are connected. Identifying these nodes is essential for creating the circuit's netlist, which details the interconnections between all components.
+
+Name the Nodes:
+Once the nodes are identified, they are labeled with names such as Vin, Vss, Vdd, and Out, which help in referencing them throughout the design and simulation process.
+
+Connections:
+
+M1 MOSFET:
+
+Drain: Connected to the Out node.
+Gate: Connected to the In node (Vin).
+Substrate and Source: Connected to the Vdd node (positive supply).
+M2 MOSFET:
+
+Drain: Connected to the Out node.
+Gate: Connected to the In node (Vin).
+Source and Substrate: Connected to ground (node 0).
+CLOAD:
+A load capacitor is connected between the Out node and ground (node 0) with a value of 10 femtofarads (ff).
+
+Supply Voltage (Vdd):
+Connected between the Vdd node and ground (node 0) with a value of 2.5V.
+
+Input Voltage (Vin):
+Connected between the Vin node and ground (node 0) with a value of 2.5V.
+
+Simulation Commands:
+In the simulation phase, the input voltage (Vin) is swept from 0 to 2.5V with a step size of 0.05V. The output voltage (Vout) is observed as Vin changes, allowing you to analyze the circuit's response.
+
+Final Modeling:
+The final step involves defining the model files, which provide a complete description of the NMOS and PMOS transistors, including their electrical characteristics and behavior within the circuit. This step ensures that the simulation accurately reflects the physical properties of the transistors.
+
+
+
+
+
+**SPICE SIMULATION LAB FOR CMOS**
+
+![Screenshot (446)](https://github.com/user-attachments/assets/45fc1fe0-54f3-47b0-94e0-f4a4fc549383)
 
 
 ## INVERTER CHARACTERISTICS
@@ -742,279 +791,662 @@ drc why
 After implementing the rules mentioned above
 ![Screenshot 2024-06-02 014238](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/2062fa05-8e3c-4414-8618-a0c2dac9f0b9)
 
-# Section 4 - Pre-layout timing analysis and importance of good clock tree
+# DAY 4 Prelayout timing analysis and importance of good clock tree
 
-**Change directory to vsdstdcelldesign**
 
+
+**Timing Modeling Using Delay Tables**
+
+Lab Task for Day 4 
+
+1. Fix DRC Errors:
+Address minor Design Rule Check (DRC) errors and ensure that the design is ready to be integrated into the flow.
+
+2. Save and Open Final Layout:
+Save the finalized layout with a custom name and open it to review.
+
+3. Generate LEF from Layout:
+Create a LEF file from the finalized layout.
+
+4. Copy LEF and Associated Files:
+Move the newly generated LEF file along with the necessary library files to the picorv32a design src directory.
+
+5. Edit config.tcl:
+Update the config.tcl file to reference the new library files and add the newly generated LEF to the OpenLANE flow.
+
+6. Run Synthesis with Custom Inverter Cell:
+Execute the OpenLANE flow synthesis, incorporating the newly added custom inverter cell.
+
+7. Resolve Violations:
+Address and minimize any new violations introduced by the custom inverter cell by adjusting design parameters.
+
+8. Verify in PnR Flow:
+Once the synthesis has accepted the custom inverter, proceed with floorplanning and placement to ensure the cell is correctly integrated into the Place and Route (PnR) flow.
+
+9. Post-Synthesis Timing Analysis:
+Perform timing analysis using the OpenSTA tool to ensure the design meets timing requirements.
+
+10. Timing ECO Fixes:
+Make Engineering Change Order (ECO) adjustments to resolve any timing violations.
+
+11. Update Netlist:
+Replace the old netlist with the new one generated after applying timing ECO fixes, then reimplement the floorplan, placement, and Clock Tree Synthesis (CTS).
+
+12. Post-CTS Timing Analysis:
+Conduct timing analysis after CTS using the OpenROAD tool.
+
+13. Explore Timing Analysis:
+Investigate the impact of removing the sky130_fd_sc_hd__clkbuf_1 cell from the clock buffer list (CTS_CLK_BUFFER_LIST) during post-CTS timing analysis with OpenROAD.
+
+LEF and DEF Files
+LEF (Library Exchange Format):
+LEF files define the physical properties of standard cells, macros, and other library components. While they don’t specify cell placement, they provide crucial details for placing and routing the design.
+
+DEF (Design Exchange Format):
+DEF files describe the actual placement and routing of cells in the design, including the precise position of each cell and the routing of interconnections.
+
+**Conditions to Satisfy Before Creating a Standard Cell**
+
+The input and output ports of the standard cell must align with the intersections of vertical and horizontal tracks.
+The width of the standard cell should be an odd multiple of the horizontal track pitch.
+The height of the standard cell should be an even multiple of the vertical track pitch.
+Track File Reference:
+Refer to the track file located at pdk/sky130/libs.tech/openlane/sky130_fd_sc_hd/track.info for detailed information on track pitch and alignment.
+
+
+Open the track file from```pdk/sky130/libs.tech /openlane/sky130_fd_sc_hd/track.info```
+
+
+![2](https://github.com/user-attachments/assets/a070a0e9-19f6-477c-b2f4-b38e3e3a9a92)  
+
+**Commands to open custom inverter layout**
+
+Change directory to vsdstdcelldesign : 
 cd Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign
 
-**Command to open custom inverter layout in magic**
-
+Command to open custom inverter layout in magic : 
 magic -T sky130A.tech sky130_inv.mag &
 
-![Screenshot 2024-06-02 070722](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/dd468a9a-8b26-4e0e-a083-3648c9dfb581)
-
-**Get syntax for grid command**
-
+Get syntax for grid command :
 help grid
 
-**Set grid values accordingly**
+Set grid values accordingly : 
+grid 0.46um 0.34um 0.23um 0.17
 
-grid 0.46um 0.34um 0.23um 0.17um
+![4](https://github.com/user-attachments/assets/faf4a323-88bc-4e98-b650-9eb241d3e1dc)
 
-![Screenshot 2024-06-02 070847](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/96414c2a-8010-4d7f-b29d-f5b3dd862497)
+![5](https://github.com/user-attachments/assets/94f852b7-46dd-407d-9d6f-9c990baf5a4e)
 
-Checking the conditons
+![6](https://github.com/user-attachments/assets/fe205bc2-2bc6-4318-b117-9f23493e69c6)
 
-![Screenshot 2024-06-02 070932](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/c8bc4543-55ad-48a3-8009-56511255fef4)
+**Opening newly created inverter and check various port names and its value**
 
-Horizontal track pitch = 0.46 um
-
-![Screenshot 2024-06-02 071829](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/ba84cc53-c807-4b91-be51-c7352480bcc2)
-
-Width of standard cell = 1.38 um = 0.46*3
-
-![Screenshot 2024-06-02 072018](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/57788680-dbdb-4f40-b9a0-0580ffb5bb0f)
-
-Height of the standard cell = 2.72 um = 0.34*8
-
-**Next step is to save the finalized layout with custom name and open it**
-
-**Command to save as**
-
+Command to save as : 
 save sky130_vsdinv.mag
 
-**Command to open custom inverter layout in magic**
-
+Command to open custom inverter layout in magic : 
 magic -T sky130A.tech sky130_vsdinv.mag &
 
-![Screenshot 2024-06-02 072813](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/df7b9179-e7ef-402f-b6e9-99dc744f0356)
 
-Screenshot of newly created lef file
-
-![Screenshot 2024-06-02 073311](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/fb484ad5-9d0a-45fd-800d-65f1607c17a8)
-
-**Now the newly generated lef and associated required lib files to 'picorv32a' design 'src' directory**
-
-To Copy files to picorv32a design src directory
-
-Copy lef file
-
-cp sky130_vsdinv.lef ~/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src/
-
-List and check whether it's copied
-
-ls ~/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src/
-
-Copy lib files
-
-cp libs/sky130_fd_sc_hd__* ~/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src/
-
-List and check whether it's copied
-
-ls ~/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src/
-
-![Screenshot 2024-06-02 090233](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/7d715be6-fd11-4e8b-b8bc-5986cf286a9b)
-
-Edit config.tcl
-
-![333](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/862f8865-855d-451a-8e75-867ffae0ff31)
-
-Running Openlane flow synthesis with newly inserted custom inverter cell
-
-After running the commands
-
-![Screenshot 2024-06-02 092433](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/10edd2ac-2ff9-4848-b2ae-944fd9b5666e)
-
-![Screenshot 2024-06-02 094657](https://github.com/chmvs/vsd_openlane_workshop/assets/129481779/7e9b8597-d837-48df-99d4-10b662fa619a)
+![7](https://github.com/user-attachments/assets/b3d15096-16aa-498e-91c4-f7445bf1f493)
 
 
-After running the synthesis we got,
-```
-Chip area for module '\picorv32a' : 147712.918400
-tns -711.59
-wns -23.89
+
+**Generating lef from layout**  
+```bash
+# lef command
+lef write
 ```
 
-### Lab challenge to describe DRC error as geometrical construct
- Now load nwell.mag file into the magic and check for violations. 
+![10](https://github.com/user-attachments/assets/f3b6f92a-2a3d-46c2-ba74-b045e7441b8d)  
 
-![Screenshot (126)](https://github.com/user-attachments/assets/606ad051-6e29-4086-805d-fe1e6a362da1)
 
-In the above layout we have some violations, Open tech file and make changes as shown:
 
-![Screenshot (127)](https://github.com/user-attachments/assets/50887aad-bd7a-48e4-9a94-9c97fc6b6807)
+![11](https://github.com/user-attachments/assets/74d237fc-fc4f-4793-909c-db212fd91c6f)
+![12](https://github.com/user-attachments/assets/0774ef85-57b2-4646-86f7-2f9c65ec232d)
 
-![Screenshot (128)](https://github.com/user-attachments/assets/95bef497-bfba-4c08-8e76-554654ab9a72)
 
-  after making necessary changes in the tech file as shown in the above images,reload the tech file in tkcon window and again perform the designated operation of drc 
- 
-![Screenshot (129)](https://github.com/user-attachments/assets/a2076436-6246-4b50-9fb4-65925ecad27c)
+![14](https://github.com/user-attachments/assets/106cf674-4eae-4182-8f76-8d279dbb7b42)  
+**Edit 'config.tcl' to change lib file and add the new extra lef into the openlane flow**  
+**Commands to be added in config.tcl**
 
-# DAY 4
-## DELAY TABLES, CTS and TIMING ANALYSIS
-### Introduction to delay tables 
-![Screenshot (130)](https://github.com/user-attachments/assets/957f23be-101d-43cc-8586-84eb712638fd)
-  Each node at every level is subjected to the same load, resulting in no skew. However, if the loads were to differ across nodes, skew would be introduced. 
- 
-### Introduction to CTS
- 
-![Screenshot (131)](https://github.com/user-attachments/assets/2e3bd4ce-7cfb-4341-9a48-25b80ceaba99)
-![Screenshot (132)](https://github.com/user-attachments/assets/48a845b1-19df-42fe-be58-5c50382dab83)
-## TIMING ANALYSIS
+set ::env(LIB_SYNTH) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__typical.lib"
+set ::env(LIB_FASTEST) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__fast.lib"
+set ::env(LIB_SLOWEST) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__slow.lib"
+set ::env(LIB_TYPICAL) "$::env(OPENLANE_ROOT)/designs/picorv32a/src/sky130_fd_sc_hd__typical.lib"
 
- ### Setup Timing Analysis with real time clocks
- 
- ![Screenshot (133)](https://github.com/user-attachments/assets/0066ad8d-c6fb-4b0a-9f21-9b188193a48e)
+set ::env(EXTRA_LEFS) [glob $::env(OPENLANE_ROOT)/designs/$::env(DESIGN_NAME)/src/*.lef]
 
-### Hold Timing Analysis
- 
-![Screenshot (134)](https://github.com/user-attachments/assets/d99474c7-5550-44bc-b56b-36fcd49d597a)
-![Screenshot (135)](https://github.com/user-attachments/assets/e05a7251-9e82-4853-a0d9-7b2243194a55)
 
-# DAY 4 (labs)
-## PRE-LAYOUT TIMING ANALYSIS & IMPORTANCE OF GOOD CLOCK TREE
-### TIMING MODELLING USING DELAY TABLES
-#### Converting the Grid Info to Track Info
- In physical design, converting grid information, such as rows and columns, into track information is essential. Tracks are predefined horizontal and vertical paths on each metal layer. When designing standard cells, it's important to ensure that input and output ports align with the intersections of vertical and horizontal tracks. Additionally, the standard cell's width should be an odd multiple of the horizontal track pitch, and its height should be an odd multiple of the vertical track pitch. 
+![15](https://github.com/user-attachments/assets/ebcd5ed2-c497-4982-b44b-dae58b304dca)
+![16](https://github.com/user-attachments/assets/ec41bbf1-e270-4905-bbee-9545654ab3f1)
 
- To proceed, we need to extract the LEF (Library Exchange Format) file for the Inverter cell. This file provides critical information necessary for the place-and-route (PNR) process. Furthermore, to understand the available horizontal and vertical tracks on each metal layer, one should refer to the `tracks.info` file. This file details the pitch, spacing, and other relevant parameters needed for efficient routing. 
+**Run openlane flow synthesis with newly inserted custom inverter cell**
 
-##### Command to open the custom Inverter Layout in Magic, first go to the 'vsdstdcelldesign' dircetory and then type the following command:
-     magic -T sky130A.tech sky130_inv.mag &
-     
-![Screenshot (136)](https://github.com/user-attachments/assets/98d9aad3-c862-489e-a4af-e4989f377893)
+Here’s the revised text broken down into points:
 
-##### Open the tracks.info file to know more about tracks
-      
-      /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/openlane/sky130_fd_sc_hd
-      less tracks.info
+1. **Navigate to the OpenLANE Directory:**
+   - Use the command `cd Desktop/work/tools/openlane_working_dir/openlane` to change to the OpenLANE flow directory.
+   - Enter the Docker environment by running `docker`.
 
-   ![Screenshot (137)](https://github.com/user-attachments/assets/31b73093-ca79-43a2-89c7-8cf84f147d21)
-##### To set grids as tracks of locali layer, use the follwoing command:
-       grid 0.46um 0.34um 0.23um 0.17um
- 
-![Screenshot (138)](https://github.com/user-attachments/assets/d3c00685-a819-4040-b843-565f00773151)
+2. **Launch OpenLANE in Interactive Mode:**
+   - Once inside the OpenLANE Docker sub-system, initiate the OpenLANE flow in Interactive mode with the command `./flow.tcl -interactive`.
 
- now we can see that the  Input and output ports are aligned with the intersections of vertical and horizontal tracks. 
+3. **Load Necessary Packages:**
+   - After the OpenLANE flow is open, load the required packages for proper functionality by executing `package require openlane 0.9`.
 
-![Screenshot (139)](https://github.com/user-attachments/assets/be986ef0-6f8e-4da6-b9d9-3639b396c7ab)
+4. **Prepare the Design:**
+   - Create the necessary files and directories for running a specific design (in this case, `picorv32a`) using the command `prep -design picorv32a`.
 
-# Converting magic layout to standard cell LEF
-##### follow the git repo given below and set up the ports
-      https://github.com/nickson-jose/vsdstdcelldesign.git
+5. **Include Newly Added LEF Files:**
+   - To incorporate any newly added LEF files into the OpenLANE flow, use the following commands:
+     - `set lefs [glob $::env(DESIGN_DIR)/src/*.lef]`
+     - `add_lefs -src $lefs`
 
-  ![Screenshot (140)](https://github.com/user-attachments/assets/5192ef9b-fef6-43da-bbd6-16195223cadd)
+6. **Run Synthesis:**
+   - With the design prepped and ready, initiate the synthesis process by running `run_synthesis`.
 
-![Screenshot (141)](https://github.com/user-attachments/assets/ff1a2348-6966-41bd-b646-69931bb8175f)
 
- to extract the LEF file. First save .mag file by using the command ``save sky130_vsdinv.mag``` in the tkcon terminal. 
 
-##### Now, use the follwoing command to open the saved mag file:
-      magic -T sky130A.tch sky130_vsdinv.mag &
-      
-   ![Screenshot (142)](https://github.com/user-attachments/assets/ac6a6ea9-3a82-4871-b2e7-2a1bc306ee27)
+![VirtualBox_vsdworkshop_08_08_2024_13_34_23](https://github.com/user-attachments/assets/af082b78-cf82-4f36-a7a8-85e01b779553)
 
- ##### To extract the Lef file use the command:
-       lef write 
-   ![Screenshot (143)](https://github.com/user-attachments/assets/870f5966-6b28-4540-a1f4-efb35c980df2)
-   
-   ![Screenshot (144)](https://github.com/user-attachments/assets/01b2ec2e-3b9b-4156-9a53-f4d0c40b163b)
 
-  Now, open the file  less sky130_vsdinv.lef
+
+
+
+Here we see even after changing command the slack that is wns(worst negative slack)=-23.89 and tns(totalnegative slack)=-711.59 has not reduced.But to reduce it we can use command  
+
+
+```set ::env(SYNTH_STRATEGY) "DELAY 3"```
+
+ which is more agressive to reduce wns and tns.Alltough ultimately slack will reduce after cts and routing is done even though it is not reduced now.
+
+
+![VirtualBox_vsdworkshop_08_08_2024_20_37_11](https://github.com/user-attachments/assets/54b9dc6c-8a79-428d-b3fd-54eb3df5a4d8)
+
+
+![VirtualBox_vsdworkshop_08_08_2024_20_40_51](https://github.com/user-attachments/assets/cc3bfea8-c429-4a24-80af-613a72140d19)
+
+![VirtualBox_vsdworkshop_08_08_2024_20_41_18](https://github.com/user-attachments/assets/abfb423f-7e87-4889-8a95-1403136933a0)
+**We see that tns and wns has reduced but correspondingly chip area has increased.So this is a trade off.Previous chip area was ```147712.918400```**
+
+
+**However we use the ```set ::env(SYNTH_STRATEGY) 1 ```to run floorplan and placement and later reduce tns and wns**
+
+![VirtualBox_vsdworkshop_04_08_2024_01_00_55](https://github.com/user-attachments/assets/49271fc5-33fb-4057-a15f-5f9e184e64cc)
+![VirtualBox_vsdworkshop_03_08_2024_20_03_46](https://github.com/user-attachments/assets/1577a759-e742-4e05-a759-016b59b5c768)
+
+![VirtualBox_vsdworkshop_03_08_2024_20_03_59](https://github.com/user-attachments/assets/c1e14930-e893-41e7-b778-81f77886d1f6)
+![VirtualBox_vsdworkshop_03_08_2024_20_04_36](https://github.com/user-attachments/assets/85857e2c-41f4-4421-ba01-28f6881e7e73)
+
+
+![VirtualBox_vsdworkshop_04_08_2024_01_07_20](https://github.com/user-attachments/assets/69497bc4-1fb1-4345-a9af-f3f81fc2488e)
+
+![VirtualBox_vsdworkshop_04_08_2024_01_09_37](https://github.com/user-attachments/assets/d2227de2-23a2-49bb-9b76-1c19be6f54db)
+**COMMAND TO OPEN MAGIC IN ANOTHER TERMINAL**
+```bash
+# Change directory to path containing generated placement def
+cd Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/29-07_10-25/results/placement/
+
+# Command to load the placement def in magic tool
+magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.placement.def &
+```
+
+![VirtualBox_vsdworkshop_04_08_2024_01_13_06](https://github.com/user-attachments/assets/58da9098-5e8a-4603-8669-2527461e3d21)
+
+
+![VirtualBox_vsdworkshop_04_08_2024_01_16_03](https://github.com/user-attachments/assets/66cdc14c-e40b-47f6-9fe1-86da8e2b35dc)
+
+## D4 SK2 Timing analysis using ideal clock using openSTA
+
+**Setup timing Analysis and Introduction to Flipflop setup time**
+
+
+
+![setup](https://github.com/user-attachments/assets/b4045b45-7d4f-4460-8aed-3ed143dd3736)
+Let's start the setup analysis with the ideal clock(single clock). specifications of the clock is
+
+clock frequency =1 GHz
+
+clock period =1 ns
+
+Now will do the analysis between '0' and 'T' clock period. We sent at edge to the launch flop at '0' clock period and at T=1ns period the second edge reached to capture flop.
+
+Let's say here we have combinatonal delay of theta and set up timing analysis says that this combinational delay should be less than the T for system to work properly.
+Now let's open the capture flop and we will see some combinational circuit there it has several MOSFETs , several logics,resistances and capacitances inside it.Also have the time graph for this particular flop
+When there is logic '0' or logic '1' of clock 1 the delay of MUX1 and MUX2 will restrict or effect the combinational delay requirement.
+
+So there is some finite amount of time which is required to the D input to settle and this amount of time is reffered to as SET UP TIME.
+
+Hence finite time 's' required before clk edge for 'D' to reach Qm.
+
+So, we can write that the internal delay of the MUX1 = set up time(S).
+
+So, now θ<T becomes θ<(T-S).
+**Introduction to clock jitter and uncertainity**
+
+
+![jitter1](https://github.com/user-attachments/assets/1081967d-3259-4ecf-a7b3-cdf41b2fa0e4)
+
+So in Jitter the clock is being created by PLL(phase-locked loops) and the clk source is expected to sent the clk signal at exactly 0,T,2T,....But that clk source might or might ot be able to generate the clk exactly at 0 or any other certain time because of it's inbuilt variations that is called jitter. Jitter is refered as temporary variation of the clk pulse.
+Let's consider this uncertantity time(US) in consideration. So, now equation will become θ<(T-S-US). Now assuming 'S'=0.01ns and 'US'=0.09ns. by taking this, Let's identify the timing path in our circuit stage 1 and stage 3 logic path has single clock.
+
+Now,we have to identify the combinational path delay for the both logics.
+**Do post synthesis timing analysis with opensta**
+```bash
+# Change directory to openlane flow directory
+cd Desktop/work/tools/openlane_working_dir/openlane
+docker
+
+# Now that we have entered the OpenLANE flow contained docker sub-system we can invoke the OpenLANE flow in the Interactive mode using the following command
+./flow.tcl -interactive
+
+# Now that OpenLANE flow is open we have to input the required packages for proper functionality of the OpenLANE flow
+package require openlane 0.9
+
+# Now the OpenLANE flow is ready to run any design and initially we have to prep the design creating some necessary files and directories for running a specific design which in our case is 'picorv32a'
+prep -design picorv32a
+
+# Adiitional commands to include newly added lef to openlane flow
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+
+# Command to set new value for SYNTH_SIZING
+set ::env(SYNTH_SIZING) 1
+
+# Now that the design is prepped and ready, we can run synthesis using following command
+run_synthesis
+```
+
+  ![VirtualBox_vsdworkshop_04_08_2024_15_06_14](https://github.com/user-attachments/assets/50663432-cef4-4300-a8ee-c28ee42e5162)
+  Newly created ```pre_sta.conf ```for STA analysis in openlane directory
   
-  ![Screenshot (145)](https://github.com/user-attachments/assets/f3f551ba-6e4e-4a6f-8350-eb6039cfa204)
 
-## Introduction to timing libs and steps to include new cell in synthesis
-##### Now, to copy the files in src directory, use the following command:
-      cp sky130_vsdinv.lef /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src
+![VirtualBox_vsdworkshop_04_08_2024_15_07_03](https://github.com/user-attachments/assets/6aec13fa-f00f-49b6-9fb9-f68afc4a8c0d)
 
-  ![Screenshot (146)](https://github.com/user-attachments/assets/0f34fcfe-0ab8-4165-b477-e6137a786150)
-  
-  ![Screenshot (147)](https://github.com/user-attachments/assets/d83c368a-e9f7-4317-acf5-419420174ec4)
+Newly created ```my_base.sdc```for STA analysis in ```openlane/designs/picorv32a/src directory``` based on the file```openlane/scripts/base.sdc```
 
-##### now, copy the follwoing files shown in image below in src directory, us the following command:
-      cp sky130_fd_sc_hd__* /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/src
-      
- ![Screenshot (148)](https://github.com/user-attachments/assets/eab21255-baea-425d-ba98-96c2fa840ef4)
- 
- #### Go to picorv32a dircetory and open the file using vim modify the config.tcl file by using the following command
-      vim config.tcl  
- ![Screenshot (149)](https://github.com/user-attachments/assets/b0824a0f-d991-426c-b216-ff840c8b117e)
+![VirtualBox_vsdworkshop_04_08_2024_15_11_46](https://github.com/user-attachments/assets/72263eb3-43e2-44a5-9747-1d180f724cc8)
 
-  now invoke the docker and follow the regular steps 
- 
- ##### as shown 
-       ./flow.tcl -interactive
-       package require openlane 0.9
-       prep -design picorv32a -tag 12-07_11-26 -overwrite
+![VirtualBox_vsdworkshop_08_08_2024_16_10_37](https://github.com/user-attachments/assets/6fb2f8e9-a152-4bcd-8354-129d5c117098)
+```bash
+# Change directory to openlane
+cd Desktop/work/tools/openlane_working_dir/openlane
 
- ![Screenshot (150)](https://github.com/user-attachments/assets/59de5ef2-bbfd-48f1-95a6-d31fe19e03e0)
+# Command to invoke OpenSTA tool with script
+sta pre_sta.conf
+```
 
-##### now run_synthesis
-      run_syntesis
-  ![Screenshot (151)](https://github.com/user-attachments/assets/b74053ab-ef25-4893-94fc-c969271a1b86)
-  
-![Screenshot (152)](https://github.com/user-attachments/assets/2c399c87-860a-46c1-b58e-1f6af37007ae)
- so now the synthesis is completed succesfully and from the above report we can see that the 
 
-#### total negative slack(tns) is -711.59
+![VirtualBox_vsdworkshop_08_08_2024_16_15_50](https://github.com/user-attachments/assets/93c3c46b-b3fb-463e-b421-1a174ef0ba10)
 
-#### worst slack (wns) is -23.89
+![VirtualBox_vsdworkshop_04_08_2024_15_11_22](https://github.com/user-attachments/assets/7749895f-e700-4d4f-83d2-c1377e85657e)
+Since more fanout is causing more delay we can add parameter to reduce fanout and do synthesis again
 
- to fix the slak make the following changes: 
+Commands to include new lef and perform synthesis
+```bash
+# Now the OpenLANE flow is ready to run any design and initially we have to prep the design creating some necessary files and directories for running a specific design which in our case is 'picorv32a'
+prep -design picorv32a -tag 29-07_10-25 -overwrite
 
-![Screenshot (153)](https://github.com/user-attachments/assets/fd2f9a97-e64f-462f-8473-361c9031a265)
+# Adiitional commands to include newly added lef to openlane flow
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
 
-now,we will run floorplan,but we observe on running run_placement we get error
+# Command to set new value for SYNTH_SIZING
+set ::env(SYNTH_SIZING) 1
 
-##### so we use 
-      init_floorplan
-      place_io
-      tap_decap_or
-      
- ![Screenshot (154)](https://github.com/user-attachments/assets/d60f29f9-ffda-44ec-8006-614e5a4eae09)
+# Command to set new value for SYNTH_MAX_FANOUT
+set ::env(SYNTH_MAX_FANOUT) 4
 
- ##### Now, as floorplan stage is completed , we run placement
-       run_placement
-![Screenshot (155)](https://github.com/user-attachments/assets/eccae563-d129-4d3e-8921-41820b731d35)
+# Command to display current value of variable SYNTH_DRIVING_CELL to check whether it's the proper cell or not
+echo $::env(SYNTH_DRIVING_CELL)
 
-![Screenshot (156)](https://github.com/user-attachments/assets/ef4505b0-6b14-4ed3-980e-3d602e72a7ad)
+# Now that the design is prepped and ready, we can run synthesis using following command
+run_synthesis
+# Change directory to openlane
+cd Desktop/work/tools/openlane_working_dir/openlane
 
-### Post synthesis timing analysis using openSTA.
- we need to create pre_sta.conf and my_base.sdc files using vi , as it is not present initially
+# Command to invoke OpenSTA tool with script
+sta pre_sta.conf
+```
 
-##### pre_sta.conf
+![VirtualBox_vsdworkshop_04_08_2024_15_12_54](https://github.com/user-attachments/assets/55183310-2ec8-4f2c-b3af-d75dba8edc95)
 
-![Screenshot (157)](https://github.com/user-attachments/assets/7601ab99-2328-4d99-a4ac-29765831b871)
+![VirtualBox_vsdworkshop_08_08_2024_18_46_36](https://github.com/user-attachments/assets/c9301065-ccb0-45fd-86b2-f42921c746bd)
 
-##### my_base.sdc
-![Screenshot (158)](https://github.com/user-attachments/assets/684c16ec-f9fb-4638-accc-efffd1e7ae59)
+![VirtualBox_vsdworkshop_04_08_2024_15_13_56](https://github.com/user-attachments/assets/36e9abc5-2168-4c03-b75c-b9df95fec940)
+![VirtualBox_vsdworkshop_04_08_2024_15_16_30](https://github.com/user-attachments/assets/b8f5d6c5-2646-4264-8a94-da19ace94b88)
+**Make timing ECO FIXES TO REMOVE ALL VIOLATION**
+OR gate of driving strength 2 is driving 4 fanouts
 
-##### now run the command
-      sta pre_sta.conf
-![Screenshot (159)](https://github.com/user-attachments/assets/d78e38c0-96ab-4e44-811e-84ff261bf1f5)
 
-![Screenshot (160)](https://github.com/user-attachments/assets/6b97658b-d85b-440d-9ed6-385126b343a5)
 
- Since the slack is met and is positive, we can continue with the flow. Since the slack is met and is positive, we can continue with the flow 
+![1](https://github.com/user-attachments/assets/57f5159e-03da-43f6-99d6-fc8b26f6e7d9)
+**Commands to perform analysis and optimize timing by replacing with OR gate of drive strength 4**
+```bash
+# Reports all the connections to a net
+report_net -connections _11668_
 
-![Screenshot  10 26 40 PM](https://github.com/user-attachments/assets/5d192494-cb4f-469b-b359-e2049d738899)
+# Replacing cell
+replace_cell _14506_ sky130_fd_sc_hd__or4_4
 
- After the synthesis, floorplan, and placement stages, we now need to proceed with the Clock Tree Synthesis (CTS) stage. During this stage, we will observe the obtained slack to determine whether it is favorable or not. 
+# Generating custom timing report
+report_checks -fields {net cap slew input_pins} -digits 4
+```
 
-##### use the command:
-      run_cts
-  ![Screenshot (162)](https://github.com/user-attachments/assets/4c4f03fd-55ba-4792-a41b-d7561cae5f59)
-##### now,invoke the openroad using the command:
-      openroad
- perform various operations of read_def,read_lef,read_db,write_db etc in openroad 
-  These stages are being performed to achieve the desired positive slack, which we have already obtained. We will verify this again by performing static timing analysis (STA). 
- 
- ![Screenshot (163)](https://github.com/user-attachments/assets/2815777d-e1ad-4d01-a936-f928228863bf)
- ![Screenshot (164)](https://github.com/user-attachments/assets/4ff70b5f-a660-4f92-a68e-e38405e3efc6)
+![2](https://github.com/user-attachments/assets/69de151b-f4a7-40e0-914e-f50c8a1151b5)
 
-# DAY 5
+
+![3](https://github.com/user-attachments/assets/642862d9-722f-4c17-b264-354a9e5e1f87)
+
+![4](https://github.com/user-attachments/assets/61aaa85a-5883-4ec1-af2e-f73c2797f861)
+OR gate of drive strength 2 is driving 4 fanouts
+
+
+![5](https://github.com/user-attachments/assets/94f2606a-591e-4ac6-bddd-5215654beb6f)
+**Commands to perform analysis and optimize timing by replacing with OR gate of drive strength 4**
+```bash
+# Reports all the connections to a net
+report_net -connections _11675_
+
+# Replacing cell
+replace_cell _14514_ sky130_fd_sc_hd__or3_4
+
+# Generating custom timing report
+report_checks -fields {net cap slew input_pins} -digits 4
+```
+
+![6](https://github.com/user-attachments/assets/5704beb9-03e3-4010-a19c-12c393c3a680)
+
+
+![7](https://github.com/user-attachments/assets/7a672c62-1d6e-430f-bd52-71bd23b48daa)
+OR gate of drive strength 2 driving OA gate has more delay
+
+![8](https://github.com/user-attachments/assets/df0eb30b-f35a-471a-b364-14c89b71f024)
+ **Commands to perform analysis and optimize timing by replacing with OR gate of drive strength 4**
+ ```bash
+# Reports all the connections to a net
+report_net -connections _11643_
+
+# Replacing cell
+replace_cell _14481_ sky130_fd_sc_hd__or4_4
+
+# Generating custom timing report
+report_checks -fields {net cap slew input_pins} -digits 4
+```
+
+![9](https://github.com/user-attachments/assets/9897b255-c413-4f5d-b247-7dd5a39c1e1c)
+
+![10](https://github.com/user-attachments/assets/d08759d7-b55d-4f37-951e-911a56a40016)
+
+OR gate of drive strength 2 driving OA gate has more delay
+
+
+![11](https://github.com/user-attachments/assets/4d749d2c-59ac-4524-ad53-df92ea2d8adc)
+**Commands to perform analysis and optimize timing by replacing with OR gate of drive strength 4**
+```bash
+
+# Reports all the connections to a net
+report_net -connections _11668_
+
+# Replacing cell
+replace_cell _14506_ sky130_fd_sc_hd__or4_4
+
+# Generating custom timing report
+report_checks -fields {net cap slew input_pins} -digits 4
+```
+
+![12](https://github.com/user-attachments/assets/9588846a-47ce-44a0-8289-1e023e2f2b0a)
+![13](https://github.com/user-attachments/assets/465304ba-12c7-4678-b92b-8eb9f87a8d48)
+**We see that the overall slack is reduced**
+## D4 SK3 Clock Tree Synthesis TritonCTS and signal integrity
+**Clock Tree routing and buffering Using H-tree algorithm**
+
+
+![clock tree](https://github.com/user-attachments/assets/c30ea7b7-d33f-464e-a5d7-a8ef0e49413d)
+**Clock tree synthesis**:Let's connect clk1 to FF1 & FF2 of stage 1 and FF1 of stage 3 and FF2 of stage 4 with physical wire.Now let's see what is the problem with this? Let's consider some physical distance from clk to FF1 and FF2 , so due to this t2>t1.
+
+Skew= t2-t1, and skew should be 0ps.Previously we have build bad tree now we will try to modify that in a smarter way. Hrre clk will come in somewhere mid points with this clk will reach to every flip flop at almost same time. In the same way we will connect the clk2 with flip flops like midpoint manner.Now will see clock tree synthesis(Buffering), Let's we have some clock route through which it has to reach to particular locations and clock end points and in the path many capacitance, resitors are there.
+
+
+![clock tree 1](https://github.com/user-attachments/assets/73ceea05-5fd3-4e9e-9e96-d7d33a6266fe)
+Because of the wire length we did not get the same wave form at ouput as input and bcz of RC networks , so to resolve this problem we use repeaters. The only difference between the repeaters we use for clock or for data path is that clock repeaters repeaters will have equal rise and fall time.
+
+First step is we will remove the clock route and place 2 repeaters and allow the clock to go through this particular repeater, in this case whatever wave form is generated here will go to the output. So we can as many as repeaters we want to make the continuous flow of th clock till the output.
+
+![clocktree2](https://github.com/user-attachments/assets/30c0ac94-fe64-4d64-9057-b3b158c5258d)
+#### Cross talk and Clock Net Shielding
+**Clocknet shielding**:Is a technique used in digital integrated circuit (IC) design to minimize the effects of noise and crosstalk on the clock signal. The clock signal is one of the most critical signals in a chip, and its integrity is vital for the proper functioning of the circuit. Shielding helps ensure that the clock signal remains clean and consistent by reducing interference from neighboring signals.
+**Crosstalk**:Crosstalk refers to the unwanted interference caused by a signal in one circuit or wire influencing a signal in an adjacent circuit or wire. In the context of integrated circuits (ICs), crosstalk primarily occurs when a signal in one net induces noise in a neighboring net due to capacitive or inductive coupling.
+
+![cross talk](https://github.com/user-attachments/assets/850ab9af-eb9a-49a7-8369-d1b8a41c4793)
+
+![cosstalk1](https://github.com/user-attachments/assets/e37e64d0-e734-4d17-a964-d0f04d9ba837)
+**Lab steps to run CTS using triton**
+**Replace the old netlist with the new netlist generated after timing ECO fix and implement the floorplan, placement and cts**
+```bash
+# Change from home directory to synthesis results directory
+cd Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/29-07_10-25/results/synthesis/
+
+# List contents of the directory
+ls
+
+# Copy and rename the netlist
+cp picorv32a.synthesis.v picorv32a.synthesis_old.v
+
+# List contents of the directory
+ls
+```
+
+![VirtualBox_vsdworkshop_08_08_2024_18_59_41](https://github.com/user-attachments/assets/3b97bf7f-15d8-410f-993e-8a29d85cbe30)
+Command to write verilog
+```bash
+
+# Check syntax
+help write_verilog
+
+# Overwriting current synthesis netlist
+write_verilog /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/designs/picorv32a/runs/29-07_10-25/results/synthesis/picorv32a.synthesis.v
+
+# Exit from OpenSTA since timing analysis is done
+exit
+```
+
+![VirtualBox_vsdworkshop_04_08_2024_16_28_17](https://github.com/user-attachments/assets/68bb08ec-2ef1-4bdf-9686-5e628d205caf)
+Verified that the netlist is overwritten by checking that instance``` _14506_``` is replaced with ```sky130_fd_sc_hd__or4_4```
+
+![VirtualBox_vsdworkshop_04_08_2024_16_29_38-replacement successful](https://github.com/user-attachments/assets/a495367e-a364-451b-87ac-d97509b64d80)
+Since we confirmed that netlist is replaced and will be loaded in PnR but since we want to follow up on the earlier 0 violation design we are continuing with the clean design to further stages
+
+Commands load the design and run necessary stages
+```bash
+# Now once again we have to prep design so as to update variables
+prep -design picorv32a -tag 29-07_10-25 -overwrite
+
+# Addiitional commands to include newly added lef to openlane flow merged.lef
+set lefs [glob $::env(DESIGN_DIR)/src/*.lef]
+add_lefs -src $lefs
+
+# Command to set new value for SYNTH_STRATEGY
+set ::env(SYNTH_STRATEGY) "DELAY 3"
+
+# Command to set new value for SYNTH_SIZING
+set ::env(SYNTH_SIZING) 1
+
+# Now that the design is prepped and ready, we can run synthesis using following command
+run_synthesis
+
+# Follwing commands are alltogather sourced in "run_floorplan" command
+init_floorplan
+place_io
+tap_decap_or
+
+# Now we are ready to run placement
+run_placement
+
+# Incase getting error
+unset ::env(LIB_CTS)
+
+# With placement done we are now ready to run CTS
+run_cts
+```
+![VirtualBox_vsdworkshop_04_08_2024_17_46_04](https://github.com/user-attachments/assets/b5932cd2-25a4-4d19-8159-da6fcc69db88)
+
+![VirtualBox_vsdworkshop_04_08_2024_17_46_47](https://github.com/user-attachments/assets/533cf13c-a690-46c7-bfd7-ad6bbadbbfed)
+
+![VirtualBox_vsdworkshop_04_08_2024_18_10_31](https://github.com/user-attachments/assets/e0875ad1-4e6b-4a08-85e8-9c082ce202cf)
+![VirtualBox_vsdworkshop_04_08_2024_18_11_46](https://github.com/user-attachments/assets/e78b1b35-b6bf-42e4-a1bf-3bf154f97c22)
+## Timing analysis with real clocks using openSTA
+**Setup analysis with real clock**
+
+
+![setup with real](https://github.com/user-attachments/assets/8160aead-5e62-4151-8324-d643b67fd7c3)
+**Hold analysis with real clock**
+
+
+
+![hold analysis](https://github.com/user-attachments/assets/07c222b4-64a0-4a0a-a9d7-051f8ee69977)
+![hold real](https://github.com/user-attachments/assets/ebbc6d54-2f9d-4fb7-b5fc-2fc587572c88)
+**Post cts OPENROAD TIMING analyis**
+```bash
+Command to run OpenROAD tool
+openroad
+
+Reading lef file
+read_lef /openLANE_flow/designs/picorv32a/runs/29-07_10-25/tmp/merged.lef
+
+Reading def file
+read_def /openLANE_flow/designs/picorv32a/runs/29-07_10-25/results/cts/picorv32a.cts.def
+
+Creating an OpenROAD database to work with
+write_db pico_cts.db
+
+Loading the created database in OpenROAD
+read_db pico_cts.db
+
+Read netlist post CTS
+read_verilog /openLANE_flow/designs/picorv32a/runs/29-07_10-25/results/synthesis/picorv32a.synthesis_cts.v
+
+Read library for design
+read_liberty $::env(LIB_SYNTH_COMPLETE)
+
+Link design and library
+link_design picorv32a
+
+Read in the custom sdc we created
+read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
+
+Setting all cloks as propagated clocks
+set_propagated_clock [all_clocks]
+
+Check syntax of 'report_checks' command
+help report_checks
+
+Generating custom timing report
+report_checks -path_delay min_max -fields {slew trans net cap input_pins} -format full_clock_expanded -digits 4
+
+Exit to OpenLANE flow
+exit
+```
+
+
+![VirtualBox_vsdworkshop_04_08_2024_19_51_05](https://github.com/user-attachments/assets/478def47-e87c-4087-ae99-35d71cd699fc)
+
+![VirtualBox_vsdworkshop_04_08_2024_19_56_48](https://github.com/user-attachments/assets/8272d640-0f3c-43a0-a136-0cac50ce8c72)
+
+
+
+![VirtualBox_vsdworkshop_04_08_2024_20_02_42](https://github.com/user-attachments/assets/e9366bdf-f754-4106-b532-e81d79bae1d3)
+
+
+![VirtualBox_vsdworkshop_04_08_2024_20_03_41](https://github.com/user-attachments/assets/d2590de4-ffa5-4f0c-a8fb-e89f5c665e54)
+**Explore post-CTS OpenROAD timing analysis by removing 'sky130_fd_sc_hd__clkbuf_1' cell from clock buffer list variable 'CTS_CLK_BUFFER_LIST'**
+```bash
+# Checking current value of 'CTS_CLK_BUFFER_LIST'
+echo $::env(CTS_CLK_BUFFER_LIST)
+
+# Removing 'sky130_fd_sc_hd__clkbuf_1' from the list
+set ::env(CTS_CLK_BUFFER_LIST) [lreplace $::env(CTS_CLK_BUFFER_LIST) 0 0]
+
+# Checking current value of 'CTS_CLK_BUFFER_LIST'
+echo $::env(CTS_CLK_BUFFER_LIST)
+
+# Checking current value of 'CURRENT_DEF'
+echo $::env(CURRENT_DEF)
+
+# Setting def as placement def
+set ::env(CURRENT_DEF) /openLANE_flow/designs/picorv32a/runs/29-07_10-25/results/placement/picorv32a.placement.def
+
+# Run CTS again
+run_cts
+
+# Checking current value of 'CTS_CLK_BUFFER_LIST'
+echo $::env(CTS_CLK_BUFFER_LIST)
+
+# Command to run OpenROAD tool
+openroad
+
+# Reading lef file
+read_lef /openLANE_flow/designs/picorv32a/runs/29-07_10-25/tmp/merged.lef
+
+# Reading def file
+read_def /openLANE_flow/designs/picorv32a/runs/29-07_10-25/results/cts/picorv32a.cts.def
+
+# Creating an OpenROAD database to work with
+write_db pico_cts1.db
+
+# Loading the created database in OpenROAD
+read_db pico_cts.db
+
+# Read netlist post CTS
+read_verilog /openLANE_flow/designs/picorv32a/runs/29-07_10-25/results/synthesis/picorv32a.synthesis_cts.v
+
+# Read library for design
+read_liberty $::env(LIB_SYNTH_COMPLETE)
+
+# Link design and library
+link_design picorv32a
+
+# Read in the custom sdc we created
+read_sdc /openLANE_flow/designs/picorv32a/src/my_base.sdc
+
+# Setting all cloks as propagated clocks
+set_propagated_clock [all_clocks]
+
+# Generating custom timing report
+report_checks -path_delay min_max -fields {slew trans net cap input_pins} -format full_clock_expanded -digits 4
+
+# Report hold skew
+report_clock_skew -hold
+
+# Report setup skew
+report_clock_skew -setup
+
+# Exit to OpenLANE flow
+exit
+
+# Checking current value of 'CTS_CLK_BUFFER_LIST'
+echo $::env(CTS_CLK_BUFFER_LIST)
+
+# Inserting 'sky130_fd_sc_hd__clkbuf_1' to first index of list
+set ::env(CTS_CLK_BUFFER_LIST) [linsert $::env(CTS_CLK_BUFFER_LIST) 0 sky130_fd_sc_hd__clkbuf_1]
+
+# Checking current value of 'CTS_CLK_BUFFER_LIST'
+echo $::env(CTS_CLK_BUFFER_LIST)
+```
+![VirtualBox_vsdworkshop_04_08_2024_23_07_15](https://github.com/user-attachments/assets/52ca802f-3cb4-45fc-a8bb-0eaea80fbbd8)
+
+![VirtualBox_vsdworkshop_04_08_2024_23_16_20](https://github.com/user-attachments/assets/420254f6-d525-4ce4-bdbd-645bba916eca)
+
+![VirtualBox_vsdworkshop_04_08_2024_23_24_31](https://github.com/user-attachments/assets/fc0e229d-118f-4ea0-90d0-7a72792b3640)
+
+![VirtualBox_vsdworkshop_04_08_2024_23_31_23](https://github.com/user-attachments/assets/fa078dc7-1722-4453-b6bb-7a6bb95b6134)
+
+![VirtualBox_vsdworkshop_04_08_2024_23_34_00](https://github.com/user-attachments/assets/486ae600-2a7c-449d-aec4-fa53c0d192d8)
+
+
+
+# DAY 5  Final steps for RTL2GDS using Tritronroute and openSTA
 ##### To know which stage was done previously in the flow? use the follwoing command 
       echo $::env(CURRENT_DEF)
       
@@ -1086,12 +1518,8 @@ now,we will run floorplan,but we observe on running run_placement we get error
   
 As we know that the OpenLANE doesn't contain a SPEF extraction tool,the resulting (.spef) file can be found in the routing folder at the results folder
 
-![Screenshot (180)](https://github.com/user-attachments/assets/8766294c-e537-4ef7-b35f-65877783297f)
+![Screenshot 2024-08-09 165737](https://github.com/user-attachments/assets/c7d7b690-0288-4f16-9764-b4bb7238f107)
 
-
-#### To view the Parsitic Extraction file, Go to the follwoing directory:
-
-   ![Screenshot (181)](https://github.com/user-attachments/assets/c2c9ca34-6029-4ad9-b03b-4f0f4f153424)
 
 
       
