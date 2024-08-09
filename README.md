@@ -16,11 +16,11 @@ The goal is to create a layout that optimizes performance, area, power consumpti
 
 ## Introduction
 ![Screenshot 2024-08-08 111702](https://github.com/user-attachments/assets/9f069ebb-adfb-4181-8f68-926b39896a95)
-Above picture depicts the Journey we will be following
+Above picture depicts the Journey that we will be following
 
 ![Screenshot 2024-08-08 121458](https://github.com/user-attachments/assets/cb6c8766-cc3a-4b97-8493-714c241e2917)
 ![Screenshot 2024-08-08 121748](https://github.com/user-attachments/assets/4408dffd-8587-44e9-abd5-1f87317049aa)
-
+In the whole process we need to make sure that O1 = O2 = O3 = O4.Every step needs to be done carefully.
 
 
 
@@ -36,16 +36,16 @@ DAY 1 : OPEN-SOURCE EDA, OPENLANE & SKY130 PDK.
 - Characterization of Synthesized Results
 
 DAY 2 :  GOOD FLOORPLAN VS BAD FLOORPLAN & INTRODUCTION TO LIBRARY CELLS.
-- CHIP FLOORPLANNING CONSIDERATIONS
-- LIBRARY BINDING AND PLACEMENTS
-- CELL DESIGN AND CHARACTERISATION FLOWS
-- GENERAL TIMING CHARACTERISATION PARAMETERS
-- FLOORPLANNING & PLACEMENT
+- Chip Floorplanning Considerations
+- Library Binding and Placements
+- Cell Design and Characterization Flows
+- General Timing and Characterization Parameters
+- Floorplanning and Placement
 
 DAY 3 : DESIGN LIBRARY CELL USING MAGIC LAYOUT AND NGSPICE CHARACTERIZATION.
-- LABS FOR CMOS INVERTER ngspice SIMULATIONS
-- INCEPTION OF LAYOUT & CMOS FABRICATION PROCESS
-- SKY130 TECH FILE LABS
+- LABS For CMOS Inverter ngspice Simulations
+- Inception of Layout & CMOS Fabrication Process
+- SKY130 Tech File Labs
 
 DAY 4 : Pre-layout timing analysis and importance to good clock tress(i.e minimum skewness).
 - Timing Modelling using delay tables
@@ -66,7 +66,7 @@ DAY 5 : Final steps for RTL2GDS flow using TritonRoute and openSTA
 ![Screenshot (46)](https://github.com/user-attachments/assets/86c2fab4-2904-4b7c-8a68-ff1daae728ba)
 
 The Arduino Uno board features a processor as the primary component of interest. The physical design will focus on the macro within the processor, implementing a block-level design.
-The image below displays the microcontroller board or PCB with various components arranged on it.
+The image below displays the microcontroller board or PCB with various components arranged on it.At the heart of the Arduino Uno is the microcontroller, typically an ATmega328P. The physical design of the microcontroller involves implementing a block-level design where various macros (such as the CPU core, memory blocks, and peripheral interfaces) are carefully arranged. Each macro is strategically placed to optimize the chip’s performance, power consumption, and manufacturability. This process involves several detailed steps, including floorplanning, placement, and routing, to ensure that all connections between macros are efficient and meet the required specifications.
 
 ![Screenshot (45)](https://github.com/user-attachments/assets/edd5523f-5b91-4793-b312-5a36bff1cca2)
 
@@ -103,12 +103,16 @@ OpenLANE is an open-source EDA toolchain designed for digital ASIC design and op
 
 
  Important LINUX Commands
-</p> 1. cd : It is used to change the current working directory.
-</p> 2. ls : It lists the contents of a directory.
-</p> 3.ls -ltr : It lists the contents of a directory in long format, sorted by modification time in reverse order (oldest first).
-</p> 4.ls --help: It displays a help message with a list of options and usage information for the "ls" command. Note : You can give any command name and then type "--help" to get info about that command.</p>
-</p> 5.cd : Using this command we can move in both ways in the directory tree.</p>
-</p> 6.clear: It clears the terminal screen.
+1. cd : It is used to change the current working directory.
+2. ls : It lists the contents of a directory.
+3. ls -ltr : It lists the contents of a directory in long format, sorted by modification time in reverse order (oldest first).
+4. ls --help: It displays a help message with a list of options and usage information for the "ls" command. Note : You can give any command name and then type "--help" to get info about that command.</p>
+5. cd : Using this command we can move in both ways in the directory tree.</p>
+6. clear: It clears the terminal screen.
+7. pwd: Displays the current working directory path.
+8. mkdir: Creates a new directory.
+9. rm: Removes files or directories.
+10. touch: Creates an empty file or updates the timestamp of an existing file.
 
  ### **Now, moving to the work directory where all files related to the workshop are stored**,use the follwoing commands
     cd Desktop 
