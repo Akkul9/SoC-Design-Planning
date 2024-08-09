@@ -1,3 +1,4 @@
+
 # DIGITAL_VSD_SOC_Design_and_Planning
 ## Physical Design
 Physical design in VLSI involves transforming a circuit's high-level description into a detailed physical layout on silicon. This process includes several key steps:
@@ -80,7 +81,7 @@ The image below displays the microcontroller board or PCB with various component
 
 3. IO PADS: I/O pads are the pins that facilitate communication between the core and the external environment. These pads are positioned around the rectangular metal areas where external connections are made. They include input pads, output pads, and power pads.
 
-4. IPs : Foundry IPs, such as SRAM, ADC, DAC, and PLLs, are typically designed with significant human involvement. They require manual design and engineering expertise to define and create. These IPs are essential components that integrate into a chip, and their design often involves customizing and optimizing them for specific applications and performance requirements.</p>
+4. IPs : Foundry IPs, such as SRAM, ADC, DAC, and PLLs, are typically designed with significant human involvement. They require manual design and engineering expertise to define and create. These IPs are essential components that integrate into a chip, and their design often involves customizing and optimizing them for specific applications and performance requirements.
  
 5. PDKs : PDKs (Process Design Kits) serve as a bridge between foundries and design engineers. They provide essential files and models for IC design tools, covering aspects like device models, DRC, LVS, physical extraction, layers, LEF, standard cell libraries, and timing libraries. In this workshop, the SkyWater 130nm PDK, specifically sky130_fd_sc_hd, is used, and the openLANE toolchain is built around this PDK.
 
@@ -91,7 +92,7 @@ The image below displays the microcontroller board or PCB with various component
 
  ## The OPENLANE Flow 
  
-OpenLANE is an open-source EDA toolchain designed for digital ASIC design and optimization. It integrates various tools and flows to streamline the design process from RTL to GDSII. OpenLANE leverages the SkyWater 130nm PDK for standard cell libraries and design rules. It automates key steps such as synthesis, placement, and routing, enhancing design efficiency. The toolchain is tailored for academic and research purposes, facilitating open access to advanced ASIC design methodologies. </p>
+OpenLANE is an open-source EDA toolchain designed for digital ASIC design and optimization. It integrates various tools and flows to streamline the design process from RTL to GDSII. OpenLANE leverages the SkyWater 130nm PDK for standard cell libraries and design rules. It automates key steps such as synthesis, placement, and routing, enhancing design efficiency. The toolchain is tailored for academic and research purposes, facilitating open access to advanced ASIC design methodologies. 
  
  ![Screenshot (43)](https://github.com/user-attachments/assets/2cd07053-ac6e-4fc1-8a80-524202b10a9a)
 
@@ -106,8 +107,8 @@ OpenLANE is an open-source EDA toolchain designed for digital ASIC design and op
 1. cd : It is used to change the current working directory.
 2. ls : It lists the contents of a directory.
 3. ls -ltr : It lists the contents of a directory in long format, sorted by modification time in reverse order (oldest first).
-4. ls --help: It displays a help message with a list of options and usage information for the "ls" command. Note : You can give any command name and then type "--help" to get info about that command.</p>
-5. cd : Using this command we can move in both ways in the directory tree.</p>
+4. ls --help: It displays a help message with a list of options and usage information for the "ls" command. Note : You can give any command name and then type "--help" to get info about that command.
+5. cd : Using this command we can move in both ways in the directory tree.
 6. clear: It clears the terminal screen.
 7. pwd: Displays the current working directory path.
 8. mkdir: Creates a new directory.
@@ -152,7 +153,7 @@ OpenLANE is an open-source EDA toolchain designed for digital ASIC design and op
 
 ![Screenshot (71)](https://github.com/user-attachments/assets/d71596a2-325c-4d75-89da-a7fd86b81e69)
 
-config.tcl -	contains the configurations used by openLANE </p>
+config.tcl -	contains the configurations used by openLANE 
 src -	contains verilog files and constraints file 
 
 ![Screenshot (72)](https://github.com/user-attachments/assets/3c480617-efc9-4f39-904f-6ab097ac5de0)
@@ -164,9 +165,9 @@ src -	contains verilog files and constraints file
 
  ### next step is to find the flop ratio.
 
-</p> formaula to find flop ratio is (number of D-ff/Total number of cells) </p>
+ formaula to find flop ratio is (number of D-ff/Total number of cells) 
 
-</p> and to get the percentage(%) multiply it by 100
+ and to get the percentage(%) multiply it by 100
 
 ![Screenshot (74)](https://github.com/user-attachments/assets/4d14b6c2-76bf-4fe0-aa50-a076571144ef)
 
@@ -180,17 +181,17 @@ src -	contains verilog files and constraints file
 
 # DAY 2
 ## Floorplan & Powerplan
-</p>  To determine the utilization factor and aspect ratio, we first need to calculate the height and width of the core and die. </p>
+  To determine the utilization factor and aspect ratio, we first need to calculate the height and width of the core and die. 
 
 ![Screenshot (77)](https://github.com/user-attachments/assets/f8329c03-6504-4f20-b87e-3a1bc5a8efa0)
 
-</p> The dimensions of the core area are determined by the design's netlist, which depends on the number of components necessary to implement the logic. Consequently, the height and width of the die area are based on the dimensions of the core area. </p>
+ The dimensions of the core area are determined by the design's netlist, which depends on the number of components necessary to implement the logic. Consequently, the height and width of the die area are based on the dimensions of the core area. 
 
-</p> For example, consider a netlist that includes two logic gates and two flip-flops. </p> 
+ For example, consider a netlist that includes two logic gates and two flip-flops.  
 
 ![Screenshot (78)](https://github.com/user-attachments/assets/502854c1-bc84-40d1-941c-980384185f32)
 
-</p> Now, if we consider each element having an area of 1 square unit, and the netlist contains 4 elements, the minimum total area required for the core area will be 4 square units.</p>
+ Now, if we consider each element having an area of 1 square unit, and the netlist contains 4 elements, the minimum total area required for the core area will be 4 square units.
 
 ![Screenshot (79)](https://github.com/user-attachments/assets/2979870b-0016-4c3f-9b7d-d1aeaa63508e)
 
@@ -206,7 +207,7 @@ The Utilization Factor is defined as the ratio of the core area occupied by the 
 
 The Aspect Ratio is defined as the ratio of the height of the core to its width. When the Aspect Ratio is 1, the core is considered square-shaped. If the Aspect Ratio is different from 1, the core will have a rectangular shape. 
 
-</p> In the below case </p>
+ In the below case 
 
 #### **Aspect Ratio = (Height of the core / Width of the core)**
 
@@ -215,7 +216,7 @@ The Aspect Ratio is defined as the ratio of the height of the core to its width.
 #### **Utilisation Factor = (4 sq units)/(4sq units) = 1**
 #### **Aspect Ratio = (2 units)/(2 units) = 1 i.e core has Square Shape**
 
-</p> now if we take another case </p>
+ now if we take another case 
 
 ![Screenshot (82)](https://github.com/user-attachments/assets/065d20fc-3b52-460b-b664-e7c6b343f13d)
 
@@ -224,7 +225,7 @@ The Aspect Ratio is defined as the ratio of the height of the core to its width.
 
 # DAY 2 (LABS)
 ## STEPS TO RUN FLOORPLAN USING OPENLANE
-</p>To ensure a smooth floorplanning process, designers need to pay close attention to specific parameters, often referred to as switches, which can significantly influence the final floorplan when modified. Key examples of these switches include the utilization factor and the aspect ratio. It is essential for designers to confirm that these parameters meet the project requirements before beginning the floorplanning stage. The image below showcases various types of switches involved in this phase.</p>
+To ensure a smooth floorplanning process, designers need to pay close attention to specific parameters, often referred to as switches, which can significantly influence the final floorplan when modified. Key examples of these switches include the utilization factor and the aspect ratio. It is essential for designers to confirm that these parameters meet the project requirements before beginning the floorplanning stage. The image below showcases various types of switches involved in this phase.
 
 
 ####  To run the Floorplan Use the following command:
@@ -237,7 +238,7 @@ The Aspect Ratio is defined as the ratio of the height of the core to its width.
 
 
 
-</p> After completing the floorplan, you can review the generated report to evaluate aspects such as die area. To visualize the design in a graphical user interface (GUI), the MAGIC tool should be used. </p>
+ After completing the floorplan, you can review the generated report to evaluate aspects such as die area. To visualize the design in a graphical user interface (GUI), the MAGIC tool should be used. 
 
  #### Now, to open this "def" file in magic , use the following command:
       magic -T /home/vsduser/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic/sky130A.tech lef read ../../tmp/merged.lef def read picorv32a.floorplan.def 
@@ -247,23 +248,23 @@ The Aspect Ratio is defined as the ratio of the height of the core to its width.
 
  ![Screenshot (87)](https://github.com/user-attachments/assets/79b26cf5-3b25-4340-81e3-926ff072e98a)
  
- Now, we can use 'Magic' tool to expllore the floorplan.</p>
+ Now, we can use 'Magic' tool to expllore the floorplan.
  
 ![Screenshot (88)](https://github.com/user-attachments/assets/26bf5c33-d69b-4924-a943-1334310f076b)
 
-</p> THe DESIGN ALLIGNMENT INSTRUCTIONS ARE AS FOLLOWS: </p>
+ THe DESIGN ALLIGNMENT INSTRUCTIONS ARE AS FOLLOWS: 
 
-### Centering the Design:</p>
-    Press S to select the entire design.</P>
-    Press V to vertically align it to the middle of the screen.</p>
-### Zooming In on a Specific Area:</p>
-    Left-click and drag to select the desired region.</p>
-    Right-click to bring up the context menu.</p>
-    Press Z to zoom in on the selected area.</p>
-### Getting Details of a Cell:</p>
-    Move your cursor to the cell of interest.</p>
+### Centering the Design:
+    Press S to select the entire design.
+    Press V to vertically align it to the middle of the screen.
+### Zooming In on a Specific Area:
+    Left-click and drag to select the desired region.
+    Right-click to bring up the context menu.
+    Press Z to zoom in on the selected area.
+### Getting Details of a Cell:
+    Move your cursor to the cell of interest.
     Press S to select the cell.
-### In the tkcon window, enter the command "what" to display cell details.</p>
+### In the tkcon window, enter the command "what" to display cell details.
 
 ![Screenshot (89)](https://github.com/user-attachments/assets/60445c80-2a2a-4145-acca-b2b00a2fbc0d)
 
@@ -273,10 +274,10 @@ The Aspect Ratio is defined as the ratio of the height of the core to its width.
 After successfully completing floorplanning, the design process progresses to the placement stage, which includes two main phases:
 
 ### Global Placement:
-</p> During this phase, the tool determines the approximate locations for all the standard cells in the design.</p>
+ During this phase, the tool determines the approximate locations for all the standard cells in the design.
 
 ### Detailed Placement:
-</P>  In this phase, the tool finalizes the exact positions for all the standard cells and ensures the placement is legal. Legalization involves verifying that no standard cells overlap and that they are all correctly positioned within the designated site rows.</P>
+  In this phase, the tool finalizes the exact positions for all the standard cells and ensures the placement is legal. Legalization involves verifying that no standard cells overlap and that they are all correctly positioned within the designated site rows.
 
 ### To initiate the placement process, use the following command
     run_placement
@@ -294,11 +295,11 @@ After successfully completing floorplanning, the design process progresses to th
 
 # DAY 3
 ### CREATION OF SPICE DECK FOR CMOS INVERTER
-</p> A Spice deck essentially contains the netlist with connectivity information, the inputs to be provided, output tap points, and additional details. </p>
+ A Spice deck essentially contains the netlist with connectivity information, the inputs to be provided, output tap points, and additional details. 
 
 ![Screenshot (95)](https://github.com/user-attachments/assets/98e6668c-a1a3-4c8e-8008-ff1a07aea726)
 
-</p>  Nodes are required to define the netlist </p>
+  Nodes are required to define the netlist 
 
 ![Screenshot (96)](https://github.com/user-attachments/assets/d9421a81-dc9d-43c4-9d72-d26aa26ced43)
 ![Screenshot (97)](https://github.com/user-attachments/assets/082cd9a2-5d48-4cee-826f-c433a5db9aa4)
@@ -345,9 +346,9 @@ After successfully completing floorplanning, the design process progresses to th
  ![Screenshot (105)](https://github.com/user-attachments/assets/98e4c135-7f74-45bf-bdb9-4be24ffa44f4)
 
  # DAY 3 (Labs)
- </p> First, we modified the IO PINS of the macro in the floorplan DEF file as shown in the image below. Then, we reran the floorplan and observed the changes. </p>
+  First, we modified the IO PINS of the macro in the floorplan DEF file as shown in the image below. Then, we reran the floorplan and observed the changes. 
  set ::env(FP_IO_MODE) 2
-</p> after making changes in floorplan def file that the pins are no more equidistant. </p>
+ after making changes in floorplan def file that the pins are no more equidistant. 
 
 ![Screenshot (106)](https://github.com/user-attachments/assets/039be199-08f0-4a88-8b68-32b81bf74b47)
 
@@ -358,7 +359,7 @@ After successfully completing floorplanning, the design process progresses to th
 ![Screenshot (107)](https://github.com/user-attachments/assets/fa084127-8b0f-4870-838c-587dbcd36f1c)
 
  ![Screenshot (108)](https://github.com/user-attachments/assets/a01a873e-4723-4b57-b5f4-ffda9aa1bcac)
- ##### From the above image, we can see that the cloning was successful. Next, we will open the 'mag' file, which requires the 'tech' file located in the following directory:</p>
+ ##### From the above image, we can see that the cloning was successful. Next, we will open the 'mag' file, which requires the 'tech' file located in the following directory:
        vsduser@vsdsquadron:~/Desktop/work/tools/openlane_working_dir/pdks/sky130A/libs.tech/magic$ 
  ##### so first we copy that file here, by using the following command:
        cp sky130A.tech /home/vsduser/Desktop/work/tools/openlane_working_dir/openlane/vsdstdcelldesign
@@ -377,11 +378,11 @@ After successfully completing floorplanning, the design process progresses to th
 
 ![Screenshot (112)](https://github.com/user-attachments/assets/ec669143-01d9-42da-95f4-96a35cd09fae)
 
-</p> Now, lets open the created spice file:
+ Now, lets open the created spice file:
 
 ![Screenshot (113)](https://github.com/user-attachments/assets/19abd143-750e-48d8-b612-2798c43adef1)
 
-</p> Now the next step is to run the SPICE file in ngspice tool by using command ngspice sky130_inv.spice </p>
+ Now the next step is to run the SPICE file in ngspice tool by using command ngspice sky130_inv.spice 
 
 ![Screenshot (114)](https://github.com/user-attachments/assets/0ea430ff-b34d-4ced-941e-ae8951f3687e)
 
@@ -431,7 +432,7 @@ In this lab, we will characterize an inverter using ngspice and Sky130 model fil
     sudo tar xfz drc_tests.tgz
  ![Screenshot (116)](https://github.com/user-attachments/assets/b8db3815-8c8f-41ed-a85c-5de1cf1bb402)
 
-</p> In the downloaded files , .magicrc file serves as the start-up script for MAGIC </p>
+ In the downloaded files , .magicrc file serves as the start-up script for MAGIC 
 
 ### INTRODUCTION TO MAGIC & STEPS TO LOAD SKY130 TECH RULES
  Run the command magic -d XR to open the Magic tool.
@@ -463,26 +464,26 @@ In this lab, we will characterize an inverter using ngspice and Sky130 model fil
 use 'feed clear' to go back to previous view
 
 ## Lab exercise to fix Poly-9 error in Sky130 tech file
-</P> Load 'poly.mag' file in magic </P>
+ Load 'poly.mag' file in magic 
 
 ![Screenshot (121)](https://github.com/user-attachments/assets/9618ac57-dcc1-40b0-b34d-267e8bce5dcf)
 
-</p> Verify the spacing between the poly resistor and the poly in the layout and compare it with the specified value on the Skywater website. Correct any spacing errors by adjusting the layout to meet the specified requirement. Recheck the spacing to confirm it now meets the specified value.</p>
+ Verify the spacing between the poly resistor and the poly in the layout and compare it with the specified value on the Skywater website. Correct any spacing errors by adjusting the layout to meet the specified requirement. Recheck the spacing to confirm it now meets the specified value.
 
 ![Screenshot (122)](https://github.com/user-attachments/assets/4ae9f4e3-4087-483b-818a-235ce6cb4108)
 
-</p> make the necessary changes to the sky130A.tech file and load the updated tech file in tkcon window,after doing so run the drc checks again </p>
+ make the necessary changes to the sky130A.tech file and load the updated tech file in tkcon window,after doing so run the drc checks again 
 
 ![Screenshot (123)](https://github.com/user-attachments/assets/b6f3f642-70fd-4ec7-8673-8d0bccdef62b)
 
 ![Screenshot (124)](https://github.com/user-attachments/assets/e77b5e86-79ca-4ac0-93a1-10bdbc8a53af)
 
-</p> Reload the technology file by entering `tech load sky130A.tech` in the terminal. Then, in the `tkcon` terminal, run `drc check` to recheck the design rule checks (DRC). </p>
+ Reload the technology file by entering `tech load sky130A.tech` in the terminal. Then, in the `tkcon` terminal, run `drc check` to recheck the design rule checks (DRC). 
 
 ![Screenshot (125)](https://github.com/user-attachments/assets/a0a708c3-58c6-4c90-b9f9-14c240f7485e)
 
 ### Lab challenge to describe DRC error as geometrical construct
-</p> Now load nwell.mag file into the magic and check for violations. </p>
+ Now load nwell.mag file into the magic and check for violations. 
 
 ![Screenshot (126)](https://github.com/user-attachments/assets/606ad051-6e29-4086-805d-fe1e6a362da1)
 
@@ -492,7 +493,7 @@ In the above layout we have some violations, Open tech file and make changes as 
 
 ![Screenshot (128)](https://github.com/user-attachments/assets/95bef497-bfba-4c08-8e76-554654ab9a72)
 
-</p>  after making necessary changes in the tech file as shown in the above images,reload the tech file in tkcon window and again perform the designated operation of drc </p>
+  after making necessary changes in the tech file as shown in the above images,reload the tech file in tkcon window and again perform the designated operation of drc 
  
 ![Screenshot (129)](https://github.com/user-attachments/assets/a2076436-6246-4b50-9fb4-65925ecad27c)
 
@@ -500,7 +501,7 @@ In the above layout we have some violations, Open tech file and make changes as 
 ## DELAY TABLES, CTS and TIMING ANALYSIS
 ### Introduction to delay tables 
 ![Screenshot (130)](https://github.com/user-attachments/assets/957f23be-101d-43cc-8586-84eb712638fd)
- </p> Each node at every level is subjected to the same load, resulting in no skew. However, if the loads were to differ across nodes, skew would be introduced. </p>
+  Each node at every level is subjected to the same load, resulting in no skew. However, if the loads were to differ across nodes, skew would be introduced. 
  
 ### Introduction to CTS
  
@@ -521,9 +522,9 @@ In the above layout we have some violations, Open tech file and make changes as 
 ## PRE-LAYOUT TIMING ANALYSIS & IMPORTANCE OF GOOD CLOCK TREE
 ### TIMING MODELLING USING DELAY TABLES
 #### Converting the Grid Info to Track Info
-</p> In physical design, converting grid information, such as rows and columns, into track information is essential. Tracks are predefined horizontal and vertical paths on each metal layer. When designing standard cells, it's important to ensure that input and output ports align with the intersections of vertical and horizontal tracks. Additionally, the standard cell's width should be an odd multiple of the horizontal track pitch, and its height should be an odd multiple of the vertical track pitch. </p>
+ In physical design, converting grid information, such as rows and columns, into track information is essential. Tracks are predefined horizontal and vertical paths on each metal layer. When designing standard cells, it's important to ensure that input and output ports align with the intersections of vertical and horizontal tracks. Additionally, the standard cell's width should be an odd multiple of the horizontal track pitch, and its height should be an odd multiple of the vertical track pitch. 
 
-</p> To proceed, we need to extract the LEF (Library Exchange Format) file for the Inverter cell. This file provides critical information necessary for the place-and-route (PNR) process. Furthermore, to understand the available horizontal and vertical tracks on each metal layer, one should refer to the `tracks.info` file. This file details the pitch, spacing, and other relevant parameters needed for efficient routing. </p>
+ To proceed, we need to extract the LEF (Library Exchange Format) file for the Inverter cell. This file provides critical information necessary for the place-and-route (PNR) process. Furthermore, to understand the available horizontal and vertical tracks on each metal layer, one should refer to the `tracks.info` file. This file details the pitch, spacing, and other relevant parameters needed for efficient routing. 
 
 ##### Command to open the custom Inverter Layout in Magic, first go to the 'vsdstdcelldesign' dircetory and then type the following command:
      magic -T sky130A.tech sky130_inv.mag &
@@ -541,7 +542,7 @@ In the above layout we have some violations, Open tech file and make changes as 
  
 ![Screenshot (138)](https://github.com/user-attachments/assets/d3c00685-a819-4040-b843-565f00773151)
 
-</p> now we can see that the  Input and output ports are aligned with the intersections of vertical and horizontal tracks. </p>
+ now we can see that the  Input and output ports are aligned with the intersections of vertical and horizontal tracks. 
 
 ![Screenshot (139)](https://github.com/user-attachments/assets/be986ef0-6f8e-4da6-b9d9-3639b396c7ab)
 
@@ -553,7 +554,7 @@ In the above layout we have some violations, Open tech file and make changes as 
 
 ![Screenshot (141)](https://github.com/user-attachments/assets/ff1a2348-6966-41bd-b646-69931bb8175f)
 
-</p> to extract the LEF file. First save .mag file by using the command ``save sky130_vsdinv.mag``` in the tkcon terminal. </p>
+ to extract the LEF file. First save .mag file by using the command ``save sky130_vsdinv.mag``` in the tkcon terminal. 
 
 ##### Now, use the follwoing command to open the saved mag file:
       magic -T sky130A.tch sky130_vsdinv.mag &
@@ -587,7 +588,7 @@ In the above layout we have some violations, Open tech file and make changes as 
       vim config.tcl  
  ![Screenshot (149)](https://github.com/user-attachments/assets/b0824a0f-d991-426c-b216-ff840c8b117e)
 
- </p> now invoke the docker and follow the regular steps 
+  now invoke the docker and follow the regular steps 
  
  ##### as shown 
        ./flow.tcl -interactive
@@ -601,13 +602,13 @@ In the above layout we have some violations, Open tech file and make changes as 
   ![Screenshot (151)](https://github.com/user-attachments/assets/b74053ab-ef25-4893-94fc-c969271a1b86)
   
 ![Screenshot (152)](https://github.com/user-attachments/assets/2c399c87-860a-46c1-b58e-1f6af37007ae)
-</p> so now the synthesis is completed succesfully and from the above report we can see that the 
+ so now the synthesis is completed succesfully and from the above report we can see that the 
 
 #### total negative slack(tns) is -711.59
 
 #### worst slack (wns) is -23.89
 
-</p> to fix the slak make the following changes: </p>
+ to fix the slak make the following changes: 
 
 ![Screenshot (153)](https://github.com/user-attachments/assets/fd2f9a97-e64f-462f-8473-361c9031a265)
 
@@ -627,7 +628,7 @@ now,we will run floorplan,but we observe on running run_placement we get error
 ![Screenshot (156)](https://github.com/user-attachments/assets/ef4505b0-6b14-4ed3-980e-3d602e72a7ad)
 
 ### Post synthesis timing analysis using openSTA.
-</p> we need to create pre_sta.conf and my_base.sdc files using vi , as it is not present initially
+ we need to create pre_sta.conf and my_base.sdc files using vi , as it is not present initially
 
 ##### pre_sta.conf
 
@@ -642,19 +643,19 @@ now,we will run floorplan,but we observe on running run_placement we get error
 
 ![Screenshot (160)](https://github.com/user-attachments/assets/6b97658b-d85b-440d-9ed6-385126b343a5)
 
-</p> Since the slack is met and is positive, we can continue with the flow.</p> Since the slack is met and is positive, we can continue with the flow </p>
+ Since the slack is met and is positive, we can continue with the flow. Since the slack is met and is positive, we can continue with the flow 
 
 ![Screenshot  10 26 40 PM](https://github.com/user-attachments/assets/5d192494-cb4f-469b-b359-e2049d738899)
 
-</p> After the synthesis, floorplan, and placement stages, we now need to proceed with the Clock Tree Synthesis (CTS) stage. During this stage, we will observe the obtained slack to determine whether it is favorable or not. </p>
+ After the synthesis, floorplan, and placement stages, we now need to proceed with the Clock Tree Synthesis (CTS) stage. During this stage, we will observe the obtained slack to determine whether it is favorable or not. 
 
 ##### use the command:
       run_cts
   ![Screenshot (162)](https://github.com/user-attachments/assets/4c4f03fd-55ba-4792-a41b-d7561cae5f59)
 ##### now,invoke the openroad using the command:
       openroad
-</p> perform various operations of read_def,read_lef,read_db,write_db etc in openroad </p>
- </p> These stages are being performed to achieve the desired positive slack, which we have already obtained. We will verify this again by performing static timing analysis (STA). </p>
+ perform various operations of read_def,read_lef,read_db,write_db etc in openroad 
+  These stages are being performed to achieve the desired positive slack, which we have already obtained. We will verify this again by performing static timing analysis (STA). 
  
  ![Screenshot (163)](https://github.com/user-attachments/assets/2815777d-e1ad-4d01-a936-f928228863bf)
  ![Screenshot (164)](https://github.com/user-attachments/assets/4ff70b5f-a660-4f92-a68e-e38405e3efc6)
@@ -676,7 +677,7 @@ now,we will run floorplan,but we observe on running run_placement we get error
   
   ![Screenshot (172)](https://github.com/user-attachments/assets/ee6a0cf3-6e44-4009-99c5-eebee8215426)
 
- </p> There are various routes possible, but routes with fewer bands are preferred, ideally a single band. There are other algorithms that can replace it since it is more time-consuming. </p>
+  There are various routes possible, but routes with fewer bands are preferred, ideally a single band. There are other algorithms that can replace it since it is more time-consuming. 
  
  ![Screenshot (173)](https://github.com/user-attachments/assets/034152d0-61ec-4794-b601-3ec5ebef1df9)
 
